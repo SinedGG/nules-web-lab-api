@@ -24,15 +24,3 @@ function db(sql, param) {
 }
 
 module.exports = db;
-
-/*
-module.exports = {
-  create: (name, email, password) => {
-    return db.query(`INSERT INTO users(name, email, password) VALUES (?,?,?)`, [
-      name,
-      email,
-      password,
-    ]);
-  },
-};
-*/

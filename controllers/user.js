@@ -7,7 +7,7 @@ const db = require("../db");
 
 function generateJWT(arg) {
   return jwt.sign(arg, process.env.JWT_SECRET, {
-    expiresIn: "10h",
+    expiresIn: "24h",
   });
 }
 
@@ -28,7 +28,8 @@ module.exports = {
       ]);
       res.json({ status: 201, message: "User created" });
     } catch (err) {
-      res.json({ status: 400 });
+      if (err.message.includes("Duplicate entry")) res.status(409);
+      res.status(400);
     }
   },
   login: async (req, res) => {
@@ -43,7 +44,7 @@ module.exports = {
         [body.username]
       );
       if (!candidate)
-        return res.json({ status: 400, message: "User not found" });
+        return res.satus(404).json({ message: "User not found" });
       const validePassw = bcrypt.compareSync(body.password, candidate.password);
       if (!validePassw)
         return res.status(400).json({ message: "Invalid password" });
@@ -60,10 +61,10 @@ module.exports = {
         console.log(e);
       });
       const jwt = generateJWT({ user: candidate.username });
-      res.status(200).json({ token: jwt });
+      res.status(200).json({ username: candidate.username, token: jwt });
     } catch (err) {
       console.log(err);
-      res.status(400);
+      res.status(500);
     }
   },
 };
