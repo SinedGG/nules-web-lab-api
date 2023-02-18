@@ -34,17 +34,19 @@ module.exports = {
   },
   login: async (req, res) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) {
+    if (!errors.isEmpty()) 
       return res.status(404).json({ errors: errors.array() });
-    }
+    
     const body = req.body;
+
     try {
       const [candidate] = await db(
         `SELECT username, password FROM users WHERE username = ?`,
         [body.username]
       );
       if (!candidate)
-        return res.satus(404).json({ message: "User not found" });
+        return res.status(404).json({ message: "User not found" })
+        
       const validePassw = bcrypt.compareSync(body.password, candidate.password);
       if (!validePassw)
         return res.status(400).json({ message: "Invalid password" });
