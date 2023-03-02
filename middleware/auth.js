@@ -1,15 +1,22 @@
 var jwt = require("jsonwebtoken");
 
-module.exports = (req, res, next) => {
-  if (req.method === "OPTIONS") next();
-  try {
-    const token = req.body.token;
-    console.log(token);
-    if (!token) return res.staus(401).json({ message: "Token required" });
+module.exports = (roles) => {
+  return (req, res, next) => {
+    if (req.method === "OPTIONS") next();
+    try {
+      const token = req.body.token;
+      if (!token) return res.status(401).json({ message: "Token required" });
 
-    jwt.verify(token, process.env.JWT_SECRET);
-    next();
-  } catch (error) {
-    res.staus(403).json({ message: "Token error" });
-  }
+      const decoded = jwt.decode(token, process.env.JWT_SECRET);
+      console.log(decoded);
+      for (let i = 0; i < roles.length; i++) {
+        if (decoded.user.roles.includes(roles[i])) return next();
+      }
+
+      return res.status(401).json({ message: "Access denied" });
+    } catch (error) {
+      console.log(error);
+      res.status(403).json({ message: "Token error" });
+    }
+  };
 };
