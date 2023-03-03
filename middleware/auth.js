@@ -8,7 +8,6 @@ module.exports = (roles) => {
       if (!token) return res.status(401).json({ message: "Token required" });
 
       const decoded = jwt.decode(token, process.env.JWT_SECRET);
-      console.log(decoded);
       for (let i = 0; i < roles.length; i++) {
         if (decoded.user.roles.includes(roles[i])) return next();
       }

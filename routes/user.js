@@ -31,6 +31,7 @@ r.post(
 
 r.post(
   "/edit",
+  auth(["admin"]),
   body("id").isInt().withMessage("Id error"),
   body("username")
     .isLength({ min: 2 })
@@ -48,9 +49,9 @@ r.post(
 const list = require("../controllers/users/list");
 const roles = require("../controllers/users/availableRoles");
 
-r.post("/list", list);
+r.post("/list", auth(["admin", "moderator"]), list);
 
-r.post("/roles", roles);
+r.post("/roles", auth(["admin", "moderator"]), roles);
 
 r.post("/validate", (req, res) => {
   res.status(200).json({ message: "token ok" });

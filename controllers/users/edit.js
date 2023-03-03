@@ -10,8 +10,6 @@ module.exports = async (req, res) => {
 
   const body = req.body;
 
-  console.log(body);
-
   if (body.password) {
     const hashPassw = await bcrypt.hash(body.password, 5);
     db(`UPDATE users SET password = ? WHERE id = ?`, [hashPassw, body.id]);
