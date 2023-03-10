@@ -53,7 +53,7 @@ r.post("/list", auth(["admin", "moderator"]), list);
 
 r.post("/roles", auth(["admin", "moderator"]), roles);
 
-r.post("/validate", (req, res) => {
+r.post("/validate", auth(["guest", "admin", "moderator"]), (req, res) => {
   res.status(200).json({ message: "token ok" });
 });
 
