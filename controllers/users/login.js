@@ -23,11 +23,12 @@ module.exports = async (req, res) => {
       `SELECT id, username, password FROM users WHERE username = ?`,
       [body.username]
     );
-    if (!candidate) return res.status(404).json({ message: "User not found" });
+    if (!candidate)
+      return res.status(404).json({ errors: [{ msg: "User not found" }] });
 
     const validePassw = bcrypt.compareSync(body.password, candidate.password);
     if (!validePassw)
-      return res.status(400).json({ message: "Invalid password" });
+      return res.status(400).json({ errors: [{ msg: "Invalid password" }] });
     const ip =
       req.headers["cf-connecting-ip"] ||
       req.headers["x-real-ip"] ||
@@ -52,6 +53,6 @@ module.exports = async (req, res) => {
     });
   } catch (err) {
     console.log(err);
-    res.status(500);
+    res.status(500).json({ errors: [{ msg: "Internal error" }] });
   }
 };

@@ -1,21 +1,18 @@
 const r = require("express").Router();
 const { body } = require("express-validator");
-//const { registration, login, list } = require("../controllers/user");
 const auth = require("../middleware/auth");
 
-const registration = require("../controllers/users/registration");
-const login = require("../controllers/users/login");
-
-const test = require("../controllers/users/test");
 const edit = require("../controllers/users/edit");
 r.post(
   "/register",
   body("username")
     .isLength({ min: 2 })
-    .withMessage("must be at least 2 chars long"),
-  body("email").isEmail(),
-  body("password").isLength({ min: 6 }),
-  registration
+    .withMessage("Username must be a 2 char long"),
+  body("email").isEmail().withMessage("Email must be valid"),
+  body("password")
+    .isLength({ min: 6 })
+    .withMessage("Password must be a 6 char long"),
+  require("../controllers/users/registration")
 );
 
 r.post(
@@ -26,7 +23,7 @@ r.post(
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be a 6 char long"),
-  login
+  require("../controllers/users/login")
 );
 
 r.post(
@@ -46,22 +43,26 @@ r.post(
   edit
 );
 
-const list = require("../controllers/users/list");
-const roles = require("../controllers/users/availableRoles");
+r.post(
+  "/delete",
+  auth(["admin"]),
+  body("id").isInt().withMessage("Id error"),
+  require("../controllers/users/delete")
+);
 
-r.post("/list", auth(["admin", "moderator"]), list);
+r.post(
+  "/list",
+  auth(["admin", "moderator"]),
+  require("../controllers/users/list")
+);
 
-r.post("/roles", auth(["admin", "moderator"]), roles);
+r.post(
+  "/roles",
+  auth(["admin", "moderator"]),
+  require("../controllers/users/availableRoles")
+);
 
 r.post("/validate", auth(["guest", "admin", "moderator"]), (req, res) => {
-  res.status(200).json({ message: "token ok" });
-});
-
-r.post("/admin", auth(["admin"]), (req, res) => {
-  res.status(200).json({ message: "token ok" });
-});
-
-r.post("/moderator", auth(["moderator"]), (req, res) => {
   res.status(200).json({ message: "token ok" });
 });
 

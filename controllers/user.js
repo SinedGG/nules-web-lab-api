@@ -26,6 +26,7 @@ module.exports = {
         body.email,
         hashPassw,
       ]);
+      console.log(`User ${body.username} created`);
       res.json({ status: 201, message: "User created" });
     } catch (err) {
       if (err.message.includes("Duplicate entry")) res.status(409);
